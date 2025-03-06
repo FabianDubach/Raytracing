@@ -5,6 +5,8 @@ from circle import Circle
 
 
 class Raster:
+
+    
     def __init__(self, window_width, window_height):
         # Initialize pygame
         pygame.init()
@@ -20,8 +22,10 @@ class Raster:
         # List of circles
         self.circles = []
 
+
     def add_circle(self, circle: Circle):
         self.circles.append(circle)
+
 
     def blend_colors(self, colors):
         """Blend multiple colors using additive mixing (like light)."""
@@ -43,6 +47,7 @@ class Raster:
                     mixed_color = self.blend_colors(overlapping_colors)
                     self.window.set_at((x, y), mixed_color)
         pygame.display.update()
+
 
     def run(self):
         self.draw_circles()
