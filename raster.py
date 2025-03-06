@@ -1,56 +1,55 @@
 import pygame
-import math
 from vector import Vector
-from circle import Circle
+from sphere import Sphere
 
-
-class Raster:
-
-    
-    def __init__(self, window_width, window_height):
-        # Initialize pygame
+class Raster3D:
+    def __init__(self, width, height):
         pygame.init()
+        self.width = width
+        self.height = height
+        self.window = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("3D Spheres")
 
-        # Set window dimensions
-        self.window_width = window_width
-        self.window_height = window_height
+        self.spheres = []
+    
+    def add_sphere(self, sphere: Sphere):
+        self.spheres.append(sphere)
 
-        # Create a window
-        self.window = pygame.display.set_mode((self.window_width, self.window_height))
-        pygame.display.set_caption("Raster")
+    def cast_ray(self, ray_origin, ray_direction):
+        """ Cast a ray and find closest sphere """
+        closest_t = float("inf")
+        closest_sphere = None
 
-        # List of circles
-        self.circles = []
+        for sphere in self.spheres:
+            t = sphere.intersects(ray_origin, ray_direction)
+            if t and t < closest_t:
+                closest_t = t
+                closest_sphere = sphere
 
+        return closest_sphere, closest_t
 
-    def add_circle(self, circle: Circle):
-        self.circles.append(circle)
+    def draw_scene(self):
+        """ Render the scene with orthographic projection """
+        for x in range(self.width):
+            for y in range(self.height):
+                # Each pixel has its own ray origin
+                ray_origin = Vector(x - self.width / 2, y - self.height / 2, -500)
+                ray_direction = Vector(0, 0, 1)  # Rays always point straight forward
 
+                sphere, t = self.cast_ray(ray_origin, ray_direction)
 
-    def blend_colors(self, colors):
-        """Blend multiple colors using additive mixing (like light)."""
-        r = min(sum(color[0] for color in colors), 255)
-        g = min(sum(color[1] for color in colors), 255)
-        b = min(sum(color[2] for color in colors), 255)
-        return (r, g, b)
+                if sphere:
+                    hit_point = ray_origin + ray_direction * t
+                    normal = sphere.get_normal(hit_point)
+                    light_dir = Vector(0, 0, -1).normalize()  # Simple light direction
+                    brightness = max(0, normal.dot(light_dir))  # Lambertian shading
+                    color = tuple(int(c * brightness) for c in sphere.color)
+                    self.window.set_at((x, y), color)
 
-
-    def draw_circles(self):
-        for x in range(self.window_width):
-            for y in range(self.window_height):
-                overlapping_colors = []
-                for circle in self.circles:
-                    if (x - circle.center.x) ** 2 + (y - circle.center.y) ** 2 <= circle.radius ** 2:
-                        overlapping_colors.append(circle.color)
-                
-                if overlapping_colors:
-                    mixed_color = self.blend_colors(overlapping_colors)
-                    self.window.set_at((x, y), mixed_color)
         pygame.display.update()
 
-
     def run(self):
-        self.draw_circles()
+        self.draw_scene()
         running = True
         while running:
             for event in pygame.event.get():
@@ -59,18 +58,17 @@ class Raster:
         pygame.quit()
 
 
-# Main function to initialize and run the application
 def main():
-    window_width = 1000
-    window_height = 800
-    
-    raster = Raster(window_width, window_height)
-    
-    # Create and add multiple circles
-    raster.add_circle(Circle(Vector(300, 400), 150, (255, 0, 0)))  # Red
-    raster.add_circle(Circle(Vector(500, 400), 150, (0, 255, 0)))  # Green
-    raster.add_circle(Circle(Vector(400, 500), 150, (0, 0, 255)))  # Blue
-    
+    raster = Raster3D(800, 600)
+
+    # Add spheres at different depths
+    raster.add_sphere(Sphere(Vector(0, 0, 0), 70, (255, 0, 0)))  # Red sphere
+    raster.add_sphere(Sphere(Vector(140, -140, 150), 80, (0, 255, 0)))  # Green sphere 1
+    raster.add_sphere(Sphere(Vector(-140, -140, 150), 80, (0, 255, 0)))  # Green sphere 2
+    raster.add_sphere(Sphere(Vector(0, 0, 300), 250, (0, 0, 255)))  # Blue sphere
+    raster.add_sphere(Sphere(Vector(-100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+    raster.add_sphere(Sphere(Vector(100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+
     raster.run()
 
 if __name__ == "__main__":

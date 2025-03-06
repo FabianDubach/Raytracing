@@ -39,7 +39,7 @@ class Vector:
         """Return a unit vector in the same direction."""
         mag = self.magnitude()
         if mag == 0:
-            raise ValueError("Cannot normalize a zero vector")
+            return Vector(0, 0, 1)
         return self * (1 / mag)
     
     def __repr__(self):
