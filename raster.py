@@ -1,4 +1,5 @@
 import pygame
+import random
 from vector import Vector
 from sphere import Sphere
 
@@ -14,6 +15,17 @@ class Raster3D:
     
     def add_sphere(self, sphere: Sphere):
         self.spheres.append(sphere)
+
+    def generate_random_spheres(self, num_spheres):
+        spheres = []
+        for _ in range(num_spheres):
+            x = random.randint(-self.width // 2, self.width // 2)  # Spread across screen width
+            y = random.randint(-self.height // 2, self.height // 2)  # Spread across screen height
+            z = random.randint(50, 400)  # Vary depth (closer or farther)
+            radius = random.randint(10, 40)  # Keep radii reasonable
+            color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))  # Random colors
+            spheres.append(Sphere(Vector(x, y, z), radius, color))
+        return spheres    
 
     def cast_ray(self, ray_origin, ray_direction):
         """ Cast a ray and find closest sphere """
@@ -61,13 +73,17 @@ class Raster3D:
 def main():
     raster = Raster3D(800, 600)
 
-    # Add spheres at different depths
-    raster.add_sphere(Sphere(Vector(0, 0, 0), 70, (255, 0, 0)))  # Red sphere
-    raster.add_sphere(Sphere(Vector(140, -140, 150), 80, (0, 255, 0)))  # Green sphere 1
-    raster.add_sphere(Sphere(Vector(-140, -140, 150), 80, (0, 255, 0)))  # Green sphere 2
-    raster.add_sphere(Sphere(Vector(0, 0, 300), 250, (0, 0, 255)))  # Blue sphere
-    raster.add_sphere(Sphere(Vector(-100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
-    raster.add_sphere(Sphere(Vector(100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+    # # Add spheres at different depths
+    # raster.add_sphere(Sphere(Vector(0, 0, 0), 70, (255, 0, 0)))  # Red sphere
+    # raster.add_sphere(Sphere(Vector(140, -140, 150), 80, (0, 255, 0)))  # Green sphere 1
+    # raster.add_sphere(Sphere(Vector(-140, -140, 150), 80, (0, 255, 0)))  # Green sphere 2
+    # raster.add_sphere(Sphere(Vector(0, 0, 300), 250, (0, 0, 255)))  # Blue sphere
+    # raster.add_sphere(Sphere(Vector(-100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+    # raster.add_sphere(Sphere(Vector(100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+
+    spheres = raster.generate_random_spheres(100)
+    for sphere in spheres:
+        raster.add_sphere(sphere)
 
     raster.run()
 
