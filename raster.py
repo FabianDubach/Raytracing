@@ -59,6 +59,20 @@ class Raster3D:
                     self.window.set_at((x, y), color)
 
         pygame.display.update()
+        
+    def generate_sphere_face(self):
+        # Add spheres at different depths
+        self.add_sphere(Sphere(Vector(0, 0, 0), 70, (255, 0, 0)))  # Red sphere
+        self.add_sphere(Sphere(Vector(140, -140, 150), 80, (0, 255, 0)))  # Green sphere 1
+        self.add_sphere(Sphere(Vector(-140, -140, 150), 80, (0, 255, 0)))  # Green sphere 2
+        self.add_sphere(Sphere(Vector(0, 0, 300), 250, (0, 0, 255)))  # Blue sphere
+        self.add_sphere(Sphere(Vector(-100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+        self.add_sphere(Sphere(Vector(100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
+        
+    def generate_random_num_of_spheres(self, num):
+        spheres = self.generate_random_spheres(num)
+        for sphere in spheres:
+            self.add_sphere(sphere)
 
     def run(self):
         self.draw_scene()
@@ -73,17 +87,9 @@ class Raster3D:
 def main():
     raster = Raster3D(800, 600)
 
-    # # Add spheres at different depths
-    # raster.add_sphere(Sphere(Vector(0, 0, 0), 70, (255, 0, 0)))  # Red sphere
-    # raster.add_sphere(Sphere(Vector(140, -140, 150), 80, (0, 255, 0)))  # Green sphere 1
-    # raster.add_sphere(Sphere(Vector(-140, -140, 150), 80, (0, 255, 0)))  # Green sphere 2
-    # raster.add_sphere(Sphere(Vector(0, 0, 300), 250, (0, 0, 255)))  # Blue sphere
-    # raster.add_sphere(Sphere(Vector(-100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
-    # raster.add_sphere(Sphere(Vector(100, -100, 230), 150, (0, 255, 255)))  # Cyan sphere 1
-
-    spheres = raster.generate_random_spheres(100)
-    for sphere in spheres:
-        raster.add_sphere(sphere)
+    # raster.generate_sphere_face()
+    
+    # raster.generate_random_num_of_spheres(2)
 
     raster.run()
 
