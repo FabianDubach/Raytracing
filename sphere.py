@@ -7,6 +7,7 @@ class Sphere:
         self.radius = radius
         self.color = color
 
+
     def intersects(self, ray_origin, ray_direction):
         """ Ray-sphere intersection test. Returns distance if intersecting, else None """
         oc = ray_origin - self.center  # Vector from ray origin to sphere center
@@ -26,6 +27,7 @@ class Sphere:
         elif t2 > 0:
             return t2
         return None
+
 
     def get_normal(self, point):
         """ Get normal vector at a given point on the sphere surface """
