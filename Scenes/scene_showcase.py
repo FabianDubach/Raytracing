@@ -1,57 +1,52 @@
-# scene_checkerboard.py - A scene with a checkerboard floor and colorful spheres
-# Compatible with the original Main class
-import math
+# scene_realistic.py - A realistic scene mimicking the reference image
 from vector import Vector
-from sphere import Sphere
-from triangle import Triangle
+from main import Material
 
 def setup_scene(raster):
-    """
-    Set up a scene with a checkerboard floor and colorful spheres
-    Compatible with the original Main class
-    """
-    # Create a checkerboard floor using triangles
-    checker_size = 100
-    floor_z = 200  # Center of the floor in z direction
-    floor_width = 10  # Number of checkers in each direction
+    """Create a realistic scene with checkerboard floor, reflections and glass spheres"""
+    # Create materials
+    materials = {
+        'white': Material((255, 255, 255)),
+        'black': Material((0, 0, 0)),
+        'red': Material((255, 50, 50), reflectivity=0.2),
+        'green': Material((50, 255, 50), reflectivity=0.2),
+        'blue': Material((50, 50, 255), reflectivity=0.2),
+        'yellow': Material((255, 255, 50), reflectivity=0.2),
+        'mirror': Material((220, 220, 220), reflectivity=0.9),
+        'glass': Material((255, 255, 255), reflectivity=0.1, transparency=0.9, refractive_index=1.5)
+    }
     
-    for row in range(-floor_width, floor_width):
-        for col in range(-floor_width, floor_width):
-            # Determine if this is a white or black checker
-            is_white = (row + col) % 2 == 0
-            checker_color = (255, 255, 255) if is_white else (0, 0, 0)
-            
-            # Calculate corners of this checker
-            x1 = col * checker_size
-            x2 = (col + 1) * checker_size
-            z1 = floor_z + row * checker_size
-            z2 = floor_z + (row + 1) * checker_size
-            
-            # Create two triangles for this checker
-            checker = [
-                Triangle(Vector(x1, 100, z1), Vector(x2, 100, z1), Vector(x2, 100, z2), checker_color),
-                Triangle(Vector(x1, 100, z1), Vector(x2, 100, z2), Vector(x1, 100, z2), checker_color)
-            ]
-            
-            raster.add_objects(checker)
+    # Create a checkerboard floor (large squares)
+    raster.add_checkerboard(100, 100, 10, materials['white'], materials['black'])
     
-    # Add colorful spheres
-    raster.add_object(Sphere(Vector(-250, 20, 200), 80, (255, 50, 50)))  # Red
-    raster.add_object(Sphere(Vector(0, 20, 400), 100, (255, 255, 50)))   # Yellow
-    raster.add_object(Sphere(Vector(250, 20, 200), 80, (50, 50, 255)))   # Blue
-    raster.add_object(Sphere(Vector(-150, 20, 600), 80, (50, 255, 50)))  # Green
-    raster.add_object(Sphere(Vector(150, 20, 600), 80, (50, 50, 255)))   # Blue
-    
-    # Add more spheres at different heights
-    raster.add_object(Sphere(Vector(0, 100, 200), 60, (220, 220, 220)))  # Silver
-    
-    # Add some smaller spheres
-    small_spheres = [
-        (Vector(-400, 50, 300), 30, (255, 50, 50)),    # Red
-        (Vector(400, 50, 300), 30, (50, 255, 50)),     # Green
-        (Vector(-300, 50, 500), 30, (50, 50, 255)),    # Blue
-        (Vector(300, 50, 500), 30, (255, 255, 50))     # Yellow
+    # Add a row of spheres near the back
+    sphere_positions = [
+        (Vector(-300, 30, 500), 60, materials['red']),
+        (Vector(-100, 30, 500), 60, materials['green']),
+        (Vector(100, 30, 500), 60, materials['blue']),
+        (Vector(300, 30, 500), 60, materials['yellow'])
     ]
     
-    for pos, size, color in small_spheres:
-        raster.add_object(Sphere(pos, size, color))
+    for pos, size, material in sphere_positions:
+        raster.add_sphere(pos, size, material)
+    
+    # Add large spheres near the middle
+    raster.add_sphere(Vector(-200, 50, 250), 80, materials['red'])
+    raster.add_sphere(Vector(0, 60, 300), 100, materials['yellow'])
+    raster.add_sphere(Vector(200, 50, 250), 80, materials['blue'])
+    
+    # Add a glass sphere in the center
+    raster.add_sphere(Vector(0, 60, 150), 70, materials['glass'])
+    
+    # Add a mirror sphere
+    raster.add_sphere(Vector(-300, 40, 100), 60, materials['mirror'])
+    
+    # Add small colored spheres in the front
+    small_spheres = [
+        (Vector(-150, 25, 50), 35, materials['green']),
+        (Vector(0, 25, 0), 35, materials['red']),
+        (Vector(150, 25, 50), 35, materials['blue'])
+    ]
+    
+    for pos, size, material in small_spheres:
+        raster.add_sphere(pos, size, material)

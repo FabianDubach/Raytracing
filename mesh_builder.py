@@ -1,7 +1,15 @@
+"""
+mesh_builder.py - Utilities for creating 3D meshes composed of triangles
+"""
+import math
 from vector import Vector
 from triangle import Triangle
 
 class MeshBuilder:
+    """
+    Static utility class for creating geometric shapes composed of triangles.
+    """
+    
     @staticmethod
     def create_cube(center, size, color):
         """
@@ -63,7 +71,7 @@ class MeshBuilder:
     @staticmethod
     def create_pyramid(center, base_size, height, color):
         """
-        Create a square-base pyramid with correctly oriented triangles
+        Create a square-base pyramid with correctly oriented triangles.
         
         Args:
             center: Vector - center of the base
@@ -103,7 +111,7 @@ class MeshBuilder:
     @staticmethod
     def create_cylinder(center, radius, height, segments, color):
         """
-        Create a cylinder mesh with proper normals
+        Create a cylinder mesh with proper normals.
         
         Args:
             center: Vector - center of the base
@@ -115,8 +123,6 @@ class MeshBuilder:
         Returns:
             list of Triangle objects
         """
-        import math
-        
         triangles = []
         
         # Create vertices for top and bottom circles
@@ -126,6 +132,7 @@ class MeshBuilder:
         top_verts = []
         bottom_verts = []
         
+        # Create the vertices around the perimeter of the cylinder
         for i in range(segments):
             angle = 2 * math.pi * i / segments
             x = center.x + radius * math.cos(angle)

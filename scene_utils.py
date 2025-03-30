@@ -1,3 +1,6 @@
+"""
+scene_utils.py - Utility functions for creating complex shapes and scenes
+"""
 import math
 from vector import Vector
 from sphere import Sphere
