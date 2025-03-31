@@ -43,9 +43,12 @@ def setup_scene(raster):
     # Rearranged colored spheres in a triangle formation
     # Yellow sphere (left front)
     raster.add_sphere(Vector(-160, 90, 10), 80, materials['yellow'])
+
+    # Metal red sphere (left back)
+    raster.add_sphere(Vector(-145, 200, 200), 50, materials['metal_red'])
     
     # Green sphere (right front)
-    raster.add_sphere(Vector(180, 100, 80), 70, materials['green'])
+    raster.add_sphere(Vector(170, 100, 80), 70, materials['green'])
     
     # Blue sphere (back center)
     raster.add_sphere(Vector(40, 200, 300), 150, materials['blue'])
@@ -68,7 +71,7 @@ def setup_scene(raster):
         raster.add_triangle(triangle.v0, triangle.v1, triangle.v2, materials['mirror'])
 
     # Add big Pyramid in the background
-    pyramid_center = Vector(-400, 0, 200)  # Positioned in the back
+    pyramid_center = Vector(-420, 0, 200)  # Positioned in the back
     pyramid_base_size = 220  # Size of the square base
     rotation = (180, 30, 0)
     pyramid_triangles = create_rotated_shape("pyramid", pyramid_center, pyramid_base_size, rotation, materials['mirror'].color)
