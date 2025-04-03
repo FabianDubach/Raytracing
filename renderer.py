@@ -11,30 +11,7 @@ from mesh_builder import MeshBuilder
 from camera import Camera
 from lighting import Light, PointLight, DirectionalLight
 
-class ProgressListener:
-    """
-    Base class for progress listeners to track rendering progress.
-    """
-    def on_progress_update(self, completed, total):
-        """
-        Called when progress is updated.
-        
-        Args:
-            completed: Number of completed pixels
-            total: Total number of pixels to render
-        """
-        pass
-
-    def on_render_complete(self, time_taken):
-        """
-        Called when rendering is complete.
-        
-        Args:
-            time_taken: Time taken to render in seconds
-        """
-        pass
-
-class ConsoleProgressListener(ProgressListener):
+class ConsoleProgressListener():
     """
     Progress listener that prints updates to the console.
     """

@@ -19,7 +19,7 @@ def setup_scene(raster):
     # Add checkerboard floor
     floor_y = 0
     checker_size = 100
-    checker_count = 15
+    checker_count = 6
     
     # Add checkerboard floor
     for row in range(-checker_count, checker_count):
@@ -29,7 +29,7 @@ def setup_scene(raster):
                 continue
                 
             is_white = (row + col) % 2 == 0
-            material = materials['black'] if is_white else materials['white']
+            material = materials['metal_black'] if is_white else materials['metal_white']
             
             x1 = col * checker_size
             x2 = (col + 1) * checker_size
@@ -56,13 +56,13 @@ def setup_scene(raster):
     raster.add_sphere(Vector(250, 120, 20), 60, materials['glass'])
     
     # Water sphere (center middle)
-    raster.add_sphere(Vector(-30, 80, 130), 65, materials['water'])
+    raster.add_sphere(Vector(-40, 80, 130), 65, materials['water'])
 
     # Red sphere (left front)
     raster.add_sphere(Vector(200, 40, 0), 40, materials['red'])
     
     # Add a rotated cube in the middle of the scene    
-    cube_center = Vector(50, 50, 80)
+    cube_center = Vector(50, 50, 130)
     cube_size = 80
     rotation = (-10, 30, 45)
     rotated_triangles = create_rotated_shape("cube", cube_center, cube_size, rotation, materials['mirror'].color)
@@ -78,9 +78,9 @@ def setup_scene(raster):
         raster.add_triangle(triangle.v0, triangle.v1, triangle.v2, materials['mirror'])
 
     # Add mirror cylinder in the background on the left
-    cylinder_center = Vector(500, 0, 220)
+    cylinder_center = Vector(500, 150, 220)
     radius = 100
-    height = 600
+    height = 300
     segments = 100  # Higher number means smoother cylinder
     raster.add_cylinder(cylinder_center, radius, height, segments, materials['chrome'])
 
@@ -90,22 +90,16 @@ def setup_scene(raster):
     # Set ambient light
     raster.set_ambient_light(0.2)
     
-    # Add key light (main illumination)
+    # Add key light
     raster.add_light(PointLight(
-        position=Vector(-400, -400, -300),
+        position=Vector(-400, -400, 400),
         intensity=0.8
     ))
-    
-    # Add fill light (softer light from opposite side)
+
+    # Add point light
     raster.add_light(PointLight(
-        position=Vector(400, -300, -200),
-        intensity=0.4
-    ))
-    
-    # Add rim light (creates highlights on edges)
-    raster.add_light(PointLight(
-        position=Vector(0, -200, -400),
-        intensity=0.3
+        position=Vector(100, 200, 400),
+        intensity=0.8
     ))
     
     # Add a directional light (like sunlight)
