@@ -1,20 +1,10 @@
-"""
-triangle.py - Triangle object for ray tracing
-"""
-from vector import Vector
-
 class Triangle:
+
     """
     Triangle class representing a 3D triangle with intersection testing for ray tracing.
     """
+
     def __init__(self, v0, v1, v2, color: tuple):
-        """
-        Initialize a triangle with three vertices and a color.
-        
-        Args:
-            v0, v1, v2: Vector vertices of the triangle
-            color: RGB color tuple (r, g, b)
-        """
         self.v0 = v0
         self.v1 = v1
         self.v2 = v2
@@ -26,16 +16,6 @@ class Triangle:
         self.normal = edge1.cross(edge2).normalize()
     
     def intersects(self, ray_origin, ray_direction):
-        """
-        Test if a ray intersects this triangle using the Möller–Trumbore algorithm.
-        
-        Args:
-            ray_origin: Vector origin of the ray
-            ray_direction: Vector direction of the ray
-            
-        Returns:
-            Distance to intersection point or None if no intersection
-        """
         EPSILON = 0.0000001  # Small value to prevent division by zero and handle precision issues
         
         # Calculate edges from v0
@@ -76,17 +56,7 @@ class Triangle:
         return None
     
     def get_normal(self, _):
-        """
-        Get normal vector for the triangle.
-        The point parameter is ignored since triangles have the same normal across their surface.
-        
-        Returns:
-            Normalized Vector perpendicular to the triangle
-        """
         return self.normal
     
     def __repr__(self):
-        """
-        String representation of the triangle for debugging.
-        """
         return f"Triangle(v0={self.v0}, v1={self.v1}, v2={self.v2}, color={self.color})"

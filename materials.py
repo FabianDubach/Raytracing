@@ -1,15 +1,6 @@
-"""
-materials.py - Material definitions and factory functions
-"""
 from ray import Material
 
 def create_standard_materials():
-    """
-    Create a set of standard materials for common use cases.
-    
-    Returns:
-        Dictionary of named materials
-    """
     # Basic materials
     matte_red = Material((255, 50, 50))
     matte_green = Material((50, 255, 50))
@@ -50,32 +41,3 @@ def create_standard_materials():
         'diamond': diamond,
         'ruby': ruby
     }
-
-# Additional material creation functions could be added here
-
-def create_metallic_material(color, reflectivity=0.7):
-    """
-    Create a metallic material with the given color and reflectivity.
-    
-    Args:
-        color: RGB color tuple (r, g, b)
-        reflectivity: How reflective the material should be (0.0-1.0)
-        
-    Returns:
-        Material object
-    """
-    return Material(color, reflectivity=reflectivity)
-
-def create_glass_material(color=(255, 255, 255), transparency=0.9, refractive_index=1.5):
-    """
-    Create a glass-like transparent material.
-    
-    Args:
-        color: RGB color tuple (r, g, b)
-        transparency: How transparent the material should be (0.0-1.0)
-        refractive_index: Refractive index (1.5 for typical glass)
-        
-    Returns:
-        Material object
-    """
-    return Material(color, reflectivity=0.1, transparency=transparency, refractive_index=refractive_index)

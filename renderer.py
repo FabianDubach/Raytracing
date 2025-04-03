@@ -1,6 +1,3 @@
-"""
-renderer.py - Ray tracing renderer class
-"""
 import time
 import math
 import multiprocessing
@@ -9,31 +6,19 @@ from vector import Vector
 from ray import Ray, EnhancedSphere, EnhancedTriangle
 from mesh_builder import MeshBuilder
 from camera import Camera
-from lighting import Light, PointLight, DirectionalLight
 
 class ConsoleProgressListener():
+
     """
     Progress listener that prints updates to the console.
     """
+
     def __init__(self, update_frequency=5.0):
-        """
-        Initialize the console progress listener.
-        
-        Args:
-            update_frequency: How often to print updates in percentage points
-        """
         self.update_frequency = update_frequency
         self.last_percentage = 0
         self.start_time = None
     
     def on_progress_update(self, completed, total):
-        """
-        Print progress updates to the console when threshold is reached.
-        
-        Args:
-            completed: Number of completed pixels
-            total: Total number of pixels to render
-        """
         if self.start_time is None:
             self.start_time = time.time()
         
@@ -45,26 +30,15 @@ class ConsoleProgressListener():
             self.last_percentage = percentage
     
     def on_render_complete(self, time_taken):
-        """
-        Print completion message.
-        
-        Args:
-            time_taken: Time taken to render in seconds
-        """
         print(f"Rendering complete in {time_taken:.2f} seconds")
 
 class Renderer:
+
     """
     Main ray tracing engine with support for reflection, refraction, and materials.
     """
+
     def __init__(self, width, height):
-        """
-        Initialize the ray tracer.
-        
-        Args:
-            width: Image width in pixels
-            height: Image height in pixels
-        """
         self.width = width
         self.height = height
         self.image = Image.new("RGB", (self.width, self.height), (0, 0, 0))
@@ -84,52 +58,21 @@ class Renderer:
         
         # Flag to use advanced camera or legacy mode
         self.use_advanced_camera = False
-        
-        # Add default lights if none are specified later
-        self.add_light(PointLight(Vector(-300, -300, -200)))
-        self.add_light(PointLight(Vector(300, -300, -200)))
+
     
     def add_progress_listener(self, listener):
-        """
-        Add a progress listener to track rendering progress.
-        
-        Args:
-            listener: A ProgressListener instance
-        """
         if listener not in self.progress_listeners:
             self.progress_listeners.append(listener)
     
     def notify_progress(self, completed, total):
-        """
-        Notify all progress listeners of rendering progress.
-        
-        Args:
-            completed: Number of completed pixels
-            total: Total number of pixels to render
-        """
         for listener in self.progress_listeners:
             listener.on_progress_update(completed, total)
     
     def notify_complete(self, time_taken):
-        """
-        Notify all progress listeners that rendering is complete.
-        
-        Args:
-            time_taken: Time taken to render in seconds
-        """
         for listener in self.progress_listeners:
             listener.on_render_complete(time_taken)
     
     def set_camera(self, position, look_at, up=None, fov=60):
-        """
-        Set a new camera for the renderer.
-        
-        Args:
-            position: Vector position of the camera
-            look_at: Vector position the camera is looking at
-            up: Vector defining the up direction (default is Vector(0, 1, 0))
-            fov: Field of view in degrees (default is 60)
-        """
         self.camera = Camera(
             position=position,
             look_at=look_at,
@@ -140,106 +83,37 @@ class Renderer:
         self.use_advanced_camera = True
     
     def set_ambient_light(self, factor):
-        """
-        Set the global ambient light intensity.
-        
-        Args:
-            factor: Ambient light factor (0.0-1.0)
-        """
         self.ambient_factor = max(0.0, min(1.0, factor))
     
     def add_light(self, light):
-        """
-        Add a light to the scene.
-        
-        Args:
-            light: Light object (PointLight, DirectionalLight, etc.)
-        """
         self.lights.append(light)
     
     def clear_lights(self):
-        """
-        Remove all lights from the scene.
-        """
         self.lights = []
     
     def add_object(self, obj):
-        """
-        Add a renderable object to the scene.
-        
-        Args:
-            obj: Object implementing intersects() and get_normal() methods
-        """
         self.objects.append(obj)
     
     def add_objects(self, objects):
-        """
-        Add multiple objects to the scene at once.
-        
-        Args:
-            objects: List of renderable objects
-        """
         self.objects.extend(objects)
     
     def add_sphere(self, center, radius, material):
-        """
-        Add a sphere with material properties.
-        
-        Args:
-            center: Vector position of the sphere's center
-            radius: Radius of the sphere
-            material: Material defining the sphere's optical properties
-        """
         self.add_object(EnhancedSphere(center, radius, material))
     
     def add_triangle(self, v0, v1, v2, material):
-        """
-        Add a triangle with material properties.
-        
-        Args:
-            v0, v1, v2: Vector vertices of the triangle
-            material: Material defining the triangle's optical properties
-        """
         self.add_object(EnhancedTriangle(v0, v1, v2, material))
     
     def add_cube(self, center, size, material):
-        """
-        Add a cube with material properties.
-        
-        Args:
-            center: Vector position of the cube's center
-            size: Side length of the cube
-            material: Material defining the cube's optical properties
-        """
         cube_triangles = MeshBuilder.create_cube(center, size, material.color)
         for triangle in cube_triangles:
             self.add_triangle(triangle.v0, triangle.v1, triangle.v2, material)
     
     def add_cylinder(self, center, radius, height, segments, material):
-        """
-        Add a cylinder with material properties.
-        
-        Args:
-            center: Vector position of the cylinder's center
-            radius: Radius of the cylinder
-            height: Height of the cylinder
-            segments: Number of segments around the circumference
-            material: Material defining the cylinder's optical properties
-        """
         cylinder_triangles = MeshBuilder.create_cylinder(center, radius, height, segments, material.color)
         for triangle in cylinder_triangles:
             self.add_triangle(triangle.v0, triangle.v1, triangle.v2, material)
     
     def add_checkerboard(self, y, size, dist, material1, material2):
-        """
-        Add a checkerboard pattern at specified y-coordinate.
-        
-        Args:
-            y: Y coordinate of the plane
-            size: Size of each square
-            dist: Distance (in squares) from origin to edge
-            material1, material2: Materials for the two colors
-        """
         for row in range(-dist, dist):
             for col in range(-dist, dist):
                 is_white = (row + col) % 2 == 0
@@ -254,30 +128,9 @@ class Renderer:
                 self.add_triangle(Vector(x1, y, z1), Vector(x2, y, z2), Vector(x1, y, z2), material)
     
     def reflect_ray(self, ray_dir, normal):
-        """
-        Calculate reflection direction.
-        
-        Args:
-            ray_dir: Incoming ray direction Vector
-            normal: Surface normal Vector
-            
-        Returns:
-            Reflected ray direction Vector
-        """
         return ray_dir - normal * (2 * ray_dir.dot(normal))
     
     def refract_ray(self, ray_dir, normal, n1, n2):
-        """
-        Calculate refraction direction using Snell's law.
-        
-        Args:
-            ray_dir: Incoming ray direction Vector
-            normal: Surface normal Vector
-            n1, n2: Refractive indices of the two media
-            
-        Returns:
-            Refracted ray direction Vector or reflection if total internal reflection occurs
-        """
         # Ensure the normal is pointing against the incident ray
         if ray_dir.dot(normal) > 0:
             normal = normal * -1
@@ -298,17 +151,6 @@ class Renderer:
         return ray_dir * ratio + normal * (ratio * cos_i - cos_t)
     
     def fresnel(self, ray_dir, normal, n1, n2):
-        """
-        Calculate Fresnel coefficient (reflection vs. refraction ratio).
-        
-        Args:
-            ray_dir: Incoming ray direction Vector
-            normal: Surface normal Vector
-            n1, n2: Refractive indices of the two media
-            
-        Returns:
-            Reflectance factor (0.0-1.0)
-        """
         # Ensure the normal is pointing against the incident ray
         if ray_dir.dot(normal) > 0:
             normal = normal * -1
@@ -332,17 +174,6 @@ class Renderer:
         return (rs * rs + rp * rp) / 2
     
     def trace_ray(self, ray_origin, ray_direction, depth=0):
-        """
-        Trace a ray through the scene, handling reflection and refraction.
-        
-        Args:
-            ray_origin: Origin point of the ray (Vector)
-            ray_direction: Direction vector of the ray (normalized Vector)
-            depth: Current recursion depth
-            
-        Returns:
-            RGB color tuple
-        """
         # Stop recursing if we've hit the maximum depth
         if depth >= self.max_depth:
             return self.background_color
@@ -465,15 +296,6 @@ class Renderer:
         return self.background_color
     
     def compute_pixel(self, xy):
-        """
-        Compute color for a single pixel.
-        
-        Args:
-            xy: Tuple of (x, y) pixel coordinates
-            
-        Returns:
-            Tuple of (x, y, color)
-        """
         x, y = xy
         
         # Get ray from camera
@@ -486,12 +308,6 @@ class Renderer:
         return x, y, color
     
     def draw_scene(self, output_file="raytraced_scene.png"):
-        """
-        Render the scene and save to an image file.
-        
-        Args:
-            output_file: Filename to save the rendered image
-        """
         pixels = self.image.load()
         coords = [(x, y) for x in range(self.width) for y in range(self.height)]
         total_pixels = len(coords)
@@ -529,17 +345,6 @@ class Renderer:
         print(f"Scene saved as {output_file}")
     
     def render_preview(self, scale=0.25, max_depth=2, output_file="preview.png"):
-        """
-        Render a quick preview of the scene with reduced settings.
-        
-        Args:
-            scale: Scale factor for resolution (0.25 = quarter size)
-            max_depth: Maximum ray recursion depth (lower = faster)
-            output_file: Filename for the preview image
-        
-        Returns:
-            Time taken to render the preview in seconds
-        """
         # Save original settings
         orig_width, orig_height = self.width, self.height
         orig_depth = self.max_depth
@@ -581,10 +386,4 @@ class Renderer:
         return time_taken
 
     def run(self, output_file="raytraced_scene.png"):
-        """
-        Run the ray tracing process and save to a file.
-        
-        Args:
-            output_file: Filename to save the rendered image
-        """
         self.draw_scene(output_file)

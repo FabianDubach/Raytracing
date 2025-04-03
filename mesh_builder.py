@@ -1,30 +1,16 @@
-"""
-mesh_builder.py - Utilities for creating 3D meshes composed of triangles
-"""
 import math
 from vector import Vector
 from triangle import Triangle
 
 class MeshBuilder:
+
     """
     Static utility class for creating geometric shapes composed of triangles.
     """
     
     @staticmethod
     def create_cube(center, size, color):
-        """
-        Create a cube mesh consisting of 12 triangles (2 triangles per face).
-        Triangles are created in counter-clockwise order when viewed from outside
-        to ensure outward-facing normals.
-        
-        Args:
-            center: Vector - center position of the cube
-            size: float - side length of the cube
-            color: tuple - RGB color for the cube
-            
-        Returns:
-            list of Triangle objects
-        """
+
         # Calculate the half-size for vertex positions
         half = size / 2
         
@@ -70,18 +56,7 @@ class MeshBuilder:
     
     @staticmethod
     def create_pyramid(center, base_size, height, color):
-        """
-        Create a square-base pyramid with correctly oriented triangles.
-        
-        Args:
-            center: Vector - center of the base
-            base_size: float - side length of the square base
-            height: float - height of the pyramid
-            color: tuple - RGB color
-            
-        Returns:
-            list of Triangle objects
-        """
+
         # Define the vertices
         half = base_size / 2
         base_y = center.y
@@ -93,7 +68,7 @@ class MeshBuilder:
         base_verts.append(Vector(center.x + half, base_y, center.z - half))  # v1: bottom-right
         base_verts.append(Vector(center.x + half, base_y, center.z + half))  # v2: top-right
         base_verts.append(Vector(center.x - half, base_y, center.z + half))  # v3: top-left
-        
+
         triangles = []
         
         # Base (2 triangles) - counter-clockwise when viewed from below
@@ -110,19 +85,7 @@ class MeshBuilder:
     
     @staticmethod
     def create_cylinder(center, radius, height, segments, color):
-        """
-        Create a cylinder mesh with proper normals.
         
-        Args:
-            center: Vector - center of the base
-            radius: float - radius of the cylinder
-            height: float - height of the cylinder
-            segments: int - number of segments around the circumference
-            color: tuple - RGB color
-            
-        Returns:
-            list of Triangle objects
-        """
         triangles = []
         
         # Create vertices for top and bottom circles

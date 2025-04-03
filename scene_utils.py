@@ -1,25 +1,10 @@
-"""
-scene_utils.py - Utility functions for creating complex shapes and scenes
-"""
 import math
 from vector import Vector
-from sphere import Sphere
-from triangle import Triangle
 from ray import EnhancedTriangle, Material
 from mesh_builder import MeshBuilder
 
 def create_truncated_icosahedron(center, radius, color):
-    """
-    Create a truncated icosahedron (soccer ball) with the given properties.
-    
-    Args:
-        center: Vector position of the center
-        radius: Radius of the soccer ball
-        color: Base color (will alternate with a darker shade)
-        
-    Returns:
-        List of Triangle objects
-    """
+
     # Golden ratio
     phi = (1 + math.sqrt(5)) / 2
     
@@ -82,17 +67,7 @@ def create_truncated_icosahedron(center, radius, color):
     return triangles
 
 def rotate_vertex(vertex, origin, rotation_degrees):
-    """
-    Rotate a vertex around an origin point.
-    
-    Args:
-        vertex: Vector to rotate
-        origin: Vector origin to rotate around
-        rotation_degrees: Tuple of (x_angle, y_angle, z_angle) in degrees
-        
-    Returns:
-        Rotated Vector
-    """
+
     # Convert rotation to radians
     angle_x = math.radians(rotation_degrees[0])
     angle_y = math.radians(rotation_degrees[1])
@@ -117,19 +92,6 @@ def rotate_vertex(vertex, origin, rotation_degrees):
     return Vector(x3 + origin.x, y3 + origin.y, z2 + origin.z)
 
 def create_rotated_shape(shape_type, center, size, rotation_degrees, color):
-    """
-    Create a shape with rotation applied.
-    
-    Args:
-        shape_type: String type of shape ("cube", "pyramid", "cylinder", "sphere")
-        center: Vector center position
-        size: Size parameter (side length for cube, base size for pyramid, etc.)
-        rotation_degrees: Tuple of (x_angle, y_angle, z_angle) in degrees
-        color: RGB color tuple
-        
-    Returns:
-        List of objects (Triangle or Sphere)
-    """
     # Create a Material from the color to ensure proper shadow handling
     material = Material(color)
     

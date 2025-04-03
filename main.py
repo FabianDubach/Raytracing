@@ -1,28 +1,15 @@
-"""
-main.py - Simplified entry point for ray tracing
-"""
 import time
 import os
 import sys
 import importlib.util
 from renderer import Renderer, ConsoleProgressListener
-from materials import create_standard_materials, Material
 
 def run_scene(scene_file, width=800, height=600, preview=False, preview_scale=0.25, preview_depth=2):
+   
     """
     Run a ray tracing scene with the given parameters.
-    
-    Args:
-        scene_file: Path to the scene file
-        width: Image width in pixels
-        height: Image height in pixels
-        preview: Whether to render a preview
-        preview_scale: Scale factor for preview (0.0-1.0)
-        preview_depth: Max recursion depth for preview
-        
-    Returns:
-        Time taken to render the scene in seconds
     """
+   
     # Check if the scene file exists
     if not os.path.exists(scene_file):
         print(f"Error: Scene file '{scene_file}' not found")

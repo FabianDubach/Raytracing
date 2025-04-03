@@ -1,28 +1,13 @@
-"""
-ray.py - Ray class and material definitions for ray tracing
-"""
-from vector import Vector
 import math
 
 class Ray:
+
     """
     Ray class with intersection testing for ray tracing.
     """
+
     @staticmethod
     def cast_ray(objects, ray_origin, ray_direction, max_distance=float("inf"), ignore_object=None):
-        """
-        Cast a ray and find closest object intersection.
-        
-        Args:
-            objects: List of renderable objects
-            ray_origin: Vector origin of the ray
-            ray_direction: Vector direction of the ray
-            max_distance: Maximum distance to check (for shadow rays)
-            ignore_object: Object to ignore (for reflection rays to avoid self-intersection)
-            
-        Returns:
-            Tuple of (closest_object, distance) or (None, None) if no intersection
-        """
         closest_t = float("inf")
         closest_obj = None
 
@@ -43,20 +28,12 @@ class Ray:
 
 
 class Material:
+
     """
     Material class defining optical properties for ray tracing.
     """
+
     def __init__(self, color, reflectivity=0.0, transparency=0.0, refractive_index=1.0):
-        """
-        Initialize a material with color and optical properties.
-        
-        Args:
-            color: RGB color tuple (r, g, b)
-            reflectivity: 0.0-1.0, how reflective the material is
-            transparency: 0.0-1.0, how transparent the material is
-            refractive_index: Refractive index for transparent materials 
-                              (1.0 for air, 1.5 for glass)
-        """
         self.color = color
         self.reflectivity = reflectivity
         self.transparency = transparency
@@ -70,18 +47,12 @@ class Material:
 
 
 class EnhancedSphere:
+
     """
     Enhanced sphere with material properties for ray tracing.
     """
+
     def __init__(self, center, radius, material):
-        """
-        Initialize a sphere with material properties.
-        
-        Args:
-            center: Vector position of the sphere's center
-            radius: Radius of the sphere
-            material: Material object defining the sphere's optical properties
-        """
         self.center = center
         self.radius = radius
         self.material = material
@@ -89,16 +60,6 @@ class EnhancedSphere:
         self.color = material.color
 
     def intersects(self, ray_origin, ray_direction):
-        """
-        Test if a ray intersects this sphere.
-        
-        Args:
-            ray_origin: Vector origin of the ray
-            ray_direction: Vector direction of the ray
-            
-        Returns:
-            Distance to intersection point or None if no intersection
-        """
         # Vector from ray origin to sphere center
         oc = ray_origin - self.center
         
@@ -124,39 +85,19 @@ class EnhancedSphere:
         return None
 
     def get_normal(self, point):
-        """
-        Get normal vector at a given point on the sphere surface.
-        
-        Args:
-            point: Vector point on the sphere surface
-            
-        Returns:
-            Normalized Vector perpendicular to the sphere at that point
-        """
         return (point - self.center).normalize()
     
     def get_material(self):
-        """
-        Get the material of this sphere.
-        
-        Returns:
-            Material object
-        """
         return self.material
 
 
 class EnhancedTriangle:
+
     """
     Enhanced triangle with material properties for ray tracing.
     """
+
     def __init__(self, v0, v1, v2, material):
-        """
-        Initialize a triangle with material properties.
-        
-        Args:
-            v0, v1, v2: Vector vertices of the triangle
-            material: Material object defining the triangle's optical properties
-        """
         self.v0 = v0
         self.v1 = v1
         self.v2 = v2
@@ -170,16 +111,6 @@ class EnhancedTriangle:
         self.normal = edge1.cross(edge2).normalize()
     
     def intersects(self, ray_origin, ray_direction):
-        """
-        Test if a ray intersects this triangle.
-        
-        Args:
-            ray_origin: Vector origin of the ray
-            ray_direction: Vector direction of the ray
-            
-        Returns:
-            Distance to intersection point or None if no intersection
-        """
         EPSILON = 0.0000001
         
         edge1 = self.v1 - self.v0
@@ -216,19 +147,7 @@ class EnhancedTriangle:
         return None
     
     def get_normal(self, _):
-        """
-        Get normal vector for the triangle.
-        
-        Returns:
-            Normalized Vector perpendicular to the triangle
-        """
         return self.normal
     
     def get_material(self):
-        """
-        Get the material of this triangle.
-        
-        Returns:
-            Material object
-        """
         return self.material

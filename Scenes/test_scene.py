@@ -1,18 +1,9 @@
-"""
-scene_shadow_casting.py - Demonstrating shadow casting between spheres
-"""
 from vector import Vector
 from materials import create_standard_materials
 from lighting import DirectionalLight
 from scene_utils import create_rotated_shape
 
 def setup_scene(raster):
-    """
-    Create a scene with a small sphere casting a shadow on a large sphere.
-    
-    Args:
-        raster: Renderer instance to set up
-    """
     # Create materials
     materials = create_standard_materials()
 

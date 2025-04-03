@@ -1,18 +1,14 @@
-"""
-scene_tilted_camera.py - Example scene with tilted camera to see the floor better
-"""
 from vector import Vector
 from materials import create_standard_materials
 from lighting import PointLight, DirectionalLight
 from scene_utils import create_rotated_shape
 
 def setup_scene(raster):
+
     """
     Create a scene with a tilted camera with a checkerboard floor.
-    
-    Args:
-        raster: Renderer instance to set up
     """
+    
     # Create materials
     materials = create_standard_materials()
     
