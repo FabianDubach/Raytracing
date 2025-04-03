@@ -63,18 +63,8 @@ class ConsoleProgressListener(ProgressListener):
         percentage = (completed / total) * 100
         
         # Only update when we've reached the next threshold
-        if percentage - self.last_percentage >= self.update_frequency or percentage >= 100:
-            elapsed = time.time() - self.start_time
-            
-            # Estimate remaining time
-            if completed > 0:
-                pixels_per_second = completed / elapsed
-                remaining_seconds = (total - completed) / pixels_per_second
-                eta = time.strftime("%H:%M:%S", time.gmtime(remaining_seconds))
-            else:
-                eta = "unknown"
-            
-            print(f"Rendering: {percentage:.1f}% complete ({completed}/{total} pixels) - ETA: {eta}")
+        if percentage - self.last_percentage >= self.update_frequency or percentage >= 100:       
+            print(f"Rendering: {percentage:.1f}% complete ({completed}/{total} pixels)")
             self.last_percentage = percentage
     
     def on_render_complete(self, time_taken):

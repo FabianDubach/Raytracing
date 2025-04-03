@@ -37,8 +37,8 @@ def setup_scene(raster):
             z2 = (row + 1) * checker_size
             
             # Create the checkerboard triangles
-            raster.add_triangle(Vector(x1, floor_y, z1), Vector(x2, floor_y, z1), Vector(x2, floor_y, z2), material)
-            raster.add_triangle(Vector(x1, floor_y, z1), Vector(x2, floor_y, z2), Vector(x1, floor_y, z2), material)
+            raster.add_triangle(Vector(x1, floor_y, z1), Vector(x2, floor_y, z2), Vector(x2, floor_y, z1), material)
+            raster.add_triangle(Vector(x1, floor_y, z1), Vector(x1, floor_y, z2), Vector(x2, floor_y, z2), material)
     
     # Yellow sphere (right front)
     raster.add_sphere(Vector(-160, 90, 10), 80, materials['yellow'])

@@ -5,6 +5,7 @@ import math
 from vector import Vector
 from sphere import Sphere
 from triangle import Triangle
+from ray import EnhancedTriangle, Material
 from mesh_builder import MeshBuilder
 
 def create_truncated_icosahedron(center, radius, color):
@@ -74,7 +75,9 @@ def create_truncated_icosahedron(center, radius, color):
             dark_color = (max(0, color[0] - 120), max(0, color[1] - 120), max(0, color[2] - 120))
             face_color = dark_color
         
-        triangles.append(Triangle(v0, v1, v2, face_color))
+        # Create a Material from the color
+        material = Material(face_color)
+        triangles.append(EnhancedTriangle(v0, v1, v2, material))
     
     return triangles
 
@@ -127,6 +130,9 @@ def create_rotated_shape(shape_type, center, size, rotation_degrees, color):
     Returns:
         List of objects (Triangle or Sphere)
     """
+    # Create a Material from the color to ensure proper shadow handling
+    material = Material(color)
+    
     if shape_type == "cube":
         original_triangles = MeshBuilder.create_cube(center, size, color)
         
@@ -135,7 +141,8 @@ def create_rotated_shape(shape_type, center, size, rotation_degrees, color):
             rotated_v0 = rotate_vertex(triangle.v0, center, rotation_degrees)
             rotated_v1 = rotate_vertex(triangle.v1, center, rotation_degrees)
             rotated_v2 = rotate_vertex(triangle.v2, center, rotation_degrees)
-            rotated_triangles.append(Triangle(rotated_v0, rotated_v1, rotated_v2, color))
+            # Use EnhancedTriangle instead of Triangle for proper shadow handling
+            rotated_triangles.append(EnhancedTriangle(rotated_v0, rotated_v1, rotated_v2, material))
         
         return rotated_triangles
         
@@ -147,7 +154,8 @@ def create_rotated_shape(shape_type, center, size, rotation_degrees, color):
             rotated_v0 = rotate_vertex(triangle.v0, center, rotation_degrees)
             rotated_v1 = rotate_vertex(triangle.v1, center, rotation_degrees)
             rotated_v2 = rotate_vertex(triangle.v2, center, rotation_degrees)
-            rotated_triangles.append(Triangle(rotated_v0, rotated_v1, rotated_v2, color))
+            # Use EnhancedTriangle instead of Triangle for proper shadow handling
+            rotated_triangles.append(EnhancedTriangle(rotated_v0, rotated_v1, rotated_v2, material))
         
         return rotated_triangles
         
@@ -159,12 +167,15 @@ def create_rotated_shape(shape_type, center, size, rotation_degrees, color):
             rotated_v0 = rotate_vertex(triangle.v0, center, rotation_degrees)
             rotated_v1 = rotate_vertex(triangle.v1, center, rotation_degrees)
             rotated_v2 = rotate_vertex(triangle.v2, center, rotation_degrees)
-            rotated_triangles.append(Triangle(rotated_v0, rotated_v1, rotated_v2, color))
+            # Use EnhancedTriangle instead of Triangle for proper shadow handling
+            rotated_triangles.append(EnhancedTriangle(rotated_v0, rotated_v1, rotated_v2, material))
         
         return rotated_triangles
     
     elif shape_type == "sphere":
-        return [Sphere(center, size, color)]
+        from ray import EnhancedSphere
+        # Return an EnhancedSphere instead of a simple Sphere for proper shadow handling
+        return [EnhancedSphere(center, size, material)]
     
     else:
         raise ValueError(f"Unknown shape type: {shape_type}")
