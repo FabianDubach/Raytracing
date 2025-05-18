@@ -8,11 +8,9 @@ from mesh_builder import MeshBuilder
 from camera import Camera
 
 class ConsoleProgressListener():
-
     """
     Progress listener that prints updates to the console.
     """
-
     def __init__(self, update_frequency=5.0):
         self.update_frequency = update_frequency
         self.last_percentage = 0
@@ -33,18 +31,16 @@ class ConsoleProgressListener():
         print(f"Rendering complete in {time_taken:.2f} seconds")
 
 class Renderer:
-
     """
     Main ray tracing engine with support for reflection, refraction, and materials.
     """
-
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.image = Image.new("RGB", (self.width, self.height), (0, 0, 0))
         self.objects = []  # List to hold all renderable objects
         self.lights = []   # List to hold all lights
-        self.max_depth = 5  # Maximum ray recursion depth
+        self.max_depth = 8  # Increased max recursion depth for better transparency
         self.background_color = (70, 130, 180)  # Steel blue sky
         self.progress_listeners = []  # List of progress listeners
         self.ambient_factor = 0.2  # Global ambient light factor
@@ -58,7 +54,6 @@ class Renderer:
         
         # Flag to use advanced camera or legacy mode
         self.use_advanced_camera = False
-
     
     def add_progress_listener(self, listener):
         if listener not in self.progress_listeners:
@@ -173,7 +168,48 @@ class Renderer:
         # Return average reflectance (unpolarized light)
         return (rs * rs + rp * rp) / 2
     
-    def trace_ray(self, ray_origin, ray_direction, depth=0):
+    def trace_shadow_ray(self, origin, direction, max_distance):
+        """
+        Trace a shadow ray and return accumulated transparency
+        """
+        current_origin = origin.copy() if hasattr(origin, 'copy') else Vector(origin.x, origin.y, origin.z)
+        transparency = 1.0  # Start with full transparency (no shadow)
+        
+        # Maximum shadow bounces to prevent infinite loops
+        max_bounces = 10
+        for _ in range(max_bounces):
+            obj, t = Ray.cast_ray(self.objects, current_origin, direction, max_distance)
+            
+            if obj is None:
+                # No more intersections, ray reaches the light
+                break
+                
+            # Check if object has transparency
+            if hasattr(obj, 'get_material'):
+                material = obj.get_material()
+                if hasattr(material, 'transparency') and material.transparency > 0:
+                    # Let some light through based on transparency
+                    transparency *= material.transparency
+                    
+                    # If object is nearly fully transparent, just ignore it
+                    if transparency < 0.01:
+                        break
+                        
+                    # Continue tracing through the object
+                    hit_point = current_origin + direction * t
+                    current_origin = hit_point + direction * 0.001
+                else:
+                    # Opaque object blocks all light
+                    transparency = 0.0
+                    break
+            else:
+                # Object without material blocks all light
+                transparency = 0.0
+                break
+                
+        return (1.0 - transparency)  # Convert to shadow intensity (0 = no shadow, 1 = full shadow)
+    
+    def trace_ray(self, ray_origin, ray_direction, depth=0, inside_medium=False):
         # Stop recursing if we've hit the maximum depth
         if depth >= self.max_depth:
             return self.background_color
@@ -208,21 +244,19 @@ class Renderer:
                     # Vector from hit point to light
                     light_dir = (light_pos - hit_point).normalize()
                     
-                    # Check for shadows
-                    shadow_origin = hit_point + normal * 0.001  # Offset to prevent self-intersection
-                    shadow_direction = light_dir
-                    
                     # Calculate distance to light
                     light_distance = (light_pos - hit_point).magnitude()
                     
-                    # Cast shadow ray
-                    shadow_obj, shadow_t = Ray.cast_ray(self.objects, shadow_origin, shadow_direction, light_distance)
+                    # Offset to prevent self-intersection
+                    shadow_origin = hit_point + normal * 0.001
                     
-                    # If no object blocks the light, add diffuse lighting
-                    if shadow_obj is None:
-                        # Calculate diffuse lighting using dot product of normal and light direction
+                    # Use the shadow ray tracer
+                    shadow_intensity = self.trace_shadow_ray(shadow_origin, light_dir, light_distance)
+                    
+                    # Add diffuse lighting (attenuated by shadow)
+                    if shadow_intensity < 1.0:
                         diffuse = max(0, normal.dot(light_dir))
-                        brightness += diffuse * light_intensity / len(light_positions)
+                        brightness += diffuse * light_intensity * (1.0 - shadow_intensity) / len(light_positions)
             else:
                 # Use the proper light system
                 light_intensity = 1.0 - self.ambient_factor
@@ -233,17 +267,16 @@ class Renderer:
                     light_dir = light.get_direction(hit_point)
                     light_distance = light.get_distance(hit_point)
                     
-                    # Check for shadows
-                    shadow_origin = hit_point + normal * 0.001  # Offset to prevent self-intersection
+                    # Offset to prevent self-intersection
+                    shadow_origin = hit_point + normal * 0.001
                     
-                    # Cast shadow ray
-                    shadow_obj, shadow_t = Ray.cast_ray(self.objects, shadow_origin, light_dir, light_distance)
+                    # Use the shadow ray tracer
+                    shadow_intensity = self.trace_shadow_ray(shadow_origin, light_dir, light_distance)
                     
-                    # If no object blocks the light, add diffuse lighting
-                    if shadow_obj is None:
-                        # Calculate diffuse lighting using dot product of normal and light direction
+                    # Add diffuse lighting (attenuated by shadow)
+                    if shadow_intensity < 1.0:
                         diffuse = max(0, normal.dot(light_dir))
-                        brightness += diffuse * light_intensity * light.intensity
+                        brightness += diffuse * light_intensity * light.intensity * (1.0 - shadow_intensity)
             
             # Apply brightness to local color
             r = int(local_color[0] * brightness)
@@ -258,28 +291,48 @@ class Renderer:
             # Handle reflection if material is reflective
             if material.reflectivity > 0:
                 reflection_dir = self.reflect_ray(ray_direction, normal)
-                reflection_origin = hit_point + normal * 0.001  # Offset to avoid self-intersection
-                reflection_color = self.trace_ray(reflection_origin, reflection_dir, depth + 1)
+                reflection_origin = hit_point + normal * 0.01  # Offset to avoid self-intersection
+                reflection_color = self.trace_ray(reflection_origin, reflection_dir, depth + 1, inside_medium)  # Keep same medium
             
             # Handle transparency/refraction if material is transparent
             if material.transparency > 0:
-                # Air refractive index = 1.0, material's refractive index from material
-                refraction_dir = self.refract_ray(ray_direction, normal, 1.0, material.refractive_index)
-                refraction_origin = hit_point - normal * 0.001  # Offset in opposite direction
-                refraction_color = self.trace_ray(refraction_origin, refraction_dir, depth + 1)
-            
-            # Compute Fresnel factor for realistic glass
-            if material.transparency > 0:
-                fresnel = self.fresnel(ray_direction, normal, 1.0, material.refractive_index)
-                reflection_contribution = material.reflectivity + material.transparency * fresnel
-                refraction_contribution = material.transparency * (1 - fresnel)
+                # Determine if we're entering or exiting based on ray direction relative to normal
+                is_entering = ray_direction.dot(normal) < 0
+                
+                # Use the correct refractive indices based on whether we're entering or exiting
+                n1 = 1.0 if is_entering else material.refractive_index
+                n2 = material.refractive_index if is_entering else 1.0
+                
+                # Calculate refraction with correct indices
+                refraction_dir = self.refract_ray(ray_direction, normal, n1, n2)
+                
+                # Create offset origin in refraction direction
+                refraction_origin = hit_point + refraction_dir * 0.01
+                
+                # Recursive ray trace with flipped inside_medium state
+                refraction_color = self.trace_ray(refraction_origin, refraction_dir, depth + 1, not inside_medium)
+                
+                # Calculate Fresnel with correct indices (only calculate once!)
+                fresnel = self.fresnel(ray_direction, normal, n1, n2)
+                # Reduce the influence of Fresnel to make transparency more dominant
+                fresnel *= 0.1  # Scale down Fresnel effect
+                
+                reflection_contribution = material.reflectivity * (1 - material.transparency) + material.transparency * fresnel
+                refraction_contribution = material.transparency * (1.0 - fresnel)
             else:
                 reflection_contribution = material.reflectivity
-                refraction_contribution = 0
+                refraction_contribution = 0.0
             
-            # Blend local color with reflection and refraction
-            direct_contribution = 1 - reflection_contribution - refraction_contribution
+            # Ensure contributions don't exceed 1.0
+            total = reflection_contribution + refraction_contribution
+            if total > 1.0:
+                reflection_contribution /= total
+                refraction_contribution /= total
             
+            # Calculate direct contribution
+            direct_contribution = max(0.0, 1.0 - reflection_contribution - refraction_contribution)
+            
+            # Blend colors
             final_r = int(local_color[0] * direct_contribution + 
                         reflection_color[0] * reflection_contribution +
                         refraction_color[0] * refraction_contribution)
@@ -304,7 +357,8 @@ class Renderer:
         else:
             ray_origin, ray_direction = self.camera.get_simple_ray(x, y, self.width, self.height)
         
-        color = self.trace_ray(ray_origin, ray_direction)
+        # Pass inside_medium=False to start outside any medium
+        color = self.trace_ray(ray_origin, ray_direction, 0, False)
         return x, y, color
     
     def draw_scene(self, output_file="raytraced_scene.png"):
@@ -344,7 +398,7 @@ class Renderer:
         self.image.save(output_file)
         print(f"Scene saved as {output_file}")
     
-    def render_preview(self, scale=0.25, max_depth=2, output_file="preview.png"):
+    def render_preview(self, scale=0.25, max_depth=4, output_file="preview.png"):
         # Save original settings
         orig_width, orig_height = self.width, self.height
         orig_depth = self.max_depth
