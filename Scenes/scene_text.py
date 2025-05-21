@@ -64,12 +64,14 @@ def setup_scene(renderer):
     renderer.add_triangle(fl_br, cl_tr, fl_tr, materials['white'])
     
     # Add better lighting - more lights from different directions
-    renderer.add_light(PointLight(Vector(-200, -150, -300), intensity=0.5))
-    renderer.add_light(PointLight(Vector(200, -150, -300), intensity=0.5))
-    renderer.add_light(PointLight(Vector(0, -200, 100), intensity=0.3))
+    renderer.add_light(PointLight(Vector(-200, -150, -300), intensity=0.3))
+    renderer.add_light(PointLight(Vector(200, -150, -300), intensity=0.3))
+    renderer.add_light(PointLight(Vector(-200, -150, 300), intensity=0.3))
+    renderer.add_light(PointLight(Vector(200, -150, 300), intensity=0.3))
+
     
     # Set ambient light slightly higher
-    renderer.set_ambient_light(0.3)
+    renderer.set_ambient_light(0.4)
     
     # Create a font renderer
     font_renderer = FontRenderer("arial.ttf", size=36, depth=10)
@@ -84,7 +86,7 @@ def setup_scene(renderer):
             material=materials['red'],          # Use red material for visibility
             scale=1.5,                          # Larger text
             rotation=(0, 180, 0),                 # No rotation needed
-            detail_level=0.8                    # Higher detail
+            detail_level=1.0                  # Higher detail
         )
     except (AttributeError, NameError):
         text_triangles = font_renderer.text_to_triangles(
@@ -100,7 +102,7 @@ def setup_scene(renderer):
     # Add the crystal clear glass sphere in front of the text
     renderer.add_sphere(
         center=Vector(0, 0, 50),        # Closer to the camera
-        radius=80,                      # Slightly smaller
+        radius=70,                      # Slightly smaller
         material=materials['glass']     # Use transparent glass
     )
     

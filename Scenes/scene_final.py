@@ -47,33 +47,33 @@ def setup_scene(renderer):
     cl_tl = Vector(-half_width, -half_height, half_depth)
     
     # Add floor triangles
-    renderer.add_triangle(fl_bl, fl_br, fl_tr, materials['mirror'])
-    renderer.add_triangle(fl_bl, fl_tr, fl_tl, materials['mirror'])
+    renderer.add_triangle(fl_bl, fl_br, fl_tr, materials['white'])
+    renderer.add_triangle(fl_bl, fl_tr, fl_tl, materials['white'])
     
     # Add ceiling triangles
-    renderer.add_triangle(cl_bl, cl_tr, cl_br, materials['mirror'])
-    renderer.add_triangle(cl_bl, cl_tl, cl_tr, materials['mirror'])
+    renderer.add_triangle(cl_bl, cl_tr, cl_br, materials['white'])
+    renderer.add_triangle(cl_bl, cl_tl, cl_tr, materials['white'])
     
     # Back wall
-    renderer.add_triangle(fl_tl, fl_tr, cl_tr, materials['mirror'])
-    renderer.add_triangle(fl_tl, cl_tr, cl_tl, materials['mirror'])
+    renderer.add_triangle(fl_tl, fl_tr, cl_tr, materials['white'])
+    renderer.add_triangle(fl_tl, cl_tr, cl_tl, materials['white'])
     
     # Left wall
-    renderer.add_triangle(fl_bl, fl_tl, cl_tl, materials['mirror'])
-    renderer.add_triangle(fl_bl, cl_tl, cl_bl, materials['mirror'])
+    renderer.add_triangle(fl_bl, fl_tl, cl_tl, materials['white'])
+    renderer.add_triangle(fl_bl, cl_tl, cl_bl, materials['white'])
     
     # Right wall
-    renderer.add_triangle(fl_br, cl_br, cl_tr, materials['mirror'])
-    renderer.add_triangle(fl_br, cl_tr, fl_tr, materials['mirror'])
+    renderer.add_triangle(fl_br, cl_br, cl_tr, materials['white'])
+    renderer.add_triangle(fl_br, cl_tr, fl_tr, materials['white'])
     
     # Add lights that are positioned entirely within the scene
     # Main central light
-    renderer.add_light(PointLight(Vector(0, -100, 0), intensity=0.6))
+    renderer.add_light(PointLight(Vector(0, -100, 0), intensity=0.3))
     # Corner lights
-    renderer.add_light(PointLight(Vector(-200, -100, -200), intensity=0.4))
-    renderer.add_light(PointLight(Vector(200, -100, -200), intensity=0.4))
+    renderer.add_light(PointLight(Vector(-200, -100, -200), intensity=0.2))
+    renderer.add_light(PointLight(Vector(200, -100, -200), intensity=0.2))
     # Backlights for the text
-    renderer.add_light(PointLight(Vector(0, 0, 300), intensity=0.3))
+    renderer.add_light(PointLight(Vector(0, 0, 300), intensity=0.2))
     
     # Set ambient light
     renderer.set_ambient_light(0.2)
@@ -113,7 +113,7 @@ def setup_scene(renderer):
     renderer.add_sphere(
         center=Vector(120, 30, 100),
         radius=30,
-        material=diamond_blue
+        material=materials['chrome']
     )
     
     # Add a metallic green sphere on the left

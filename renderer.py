@@ -34,7 +34,7 @@ class Renderer:
     """
     Main ray tracing engine with support for reflection, refraction, and materials.
     """
-    def __init__(self, width, height):
+    def __init__(self, width, height, samples_per_pixel=1):
         self.width = width
         self.height = height
         self.image = Image.new("RGB", (self.width, self.height), (0, 0, 0))
@@ -44,6 +44,7 @@ class Renderer:
         self.background_color = (70, 130, 180)  # Steel blue sky
         self.progress_listeners = []  # List of progress listeners
         self.ambient_factor = 0.2  # Global ambient light factor
+        self.samples_per_pixel = samples_per_pixel
         
         # Default camera (compatible with original code)
         self.camera = Camera(
@@ -314,8 +315,6 @@ class Renderer:
                 
                 # Calculate Fresnel with correct indices (only calculate once!)
                 fresnel = self.fresnel(ray_direction, normal, n1, n2)
-                # Reduce the influence of Fresnel to make transparency more dominant
-                fresnel *= 0.1  # Scale down Fresnel effect
                 
                 reflection_contribution = material.reflectivity * (1 - material.transparency) + material.transparency * fresnel
                 refraction_contribution = material.transparency * (1.0 - fresnel)
@@ -351,15 +350,47 @@ class Renderer:
     def compute_pixel(self, xy):
         x, y = xy
         
-        # Get ray from camera
-        if self.use_advanced_camera:
-            ray_origin, ray_direction = self.camera.get_ray(x, y, self.width, self.height)
-        else:
-            ray_origin, ray_direction = self.camera.get_simple_ray(x, y, self.width, self.height)
+        # Initialize accumulators for color components
+        r_total, g_total, b_total = 0, 0, 0
         
-        # Pass inside_medium=False to start outside any medium
-        color = self.trace_ray(ray_origin, ray_direction, 0, False)
-        return x, y, color
+        # For each sample
+        for s in range(self.samples_per_pixel):
+            # Calculate jittered sample position
+            if self.samples_per_pixel > 1:
+                # Add random offset within the pixel
+                sample_x = x + (s % 2) * 0.5  # Basic 2x2 grid sampling
+                sample_y = y + (s // 2) * 0.5
+                
+                # For higher sample counts, use more sophisticated patterns
+                if self.samples_per_pixel > 4:
+                    # Add a small random offset for each sample
+                    import random
+                    sample_x = x + random.random()
+                    sample_y = y + random.random()
+            else:
+                # Just use the center of the pixel if only one sample
+                sample_x, sample_y = x, y
+            
+            # Get ray from camera
+            if self.use_advanced_camera:
+                ray_origin, ray_direction = self.camera.get_ray(sample_x, sample_y, self.width, self.height)
+            else:
+                ray_origin, ray_direction = self.camera.get_simple_ray(sample_x, sample_y, self.width, self.height)
+            
+            # Trace the ray
+            color = self.trace_ray(ray_origin, ray_direction, 0, None)
+            
+            # Accumulate color components
+            r_total += color[0]
+            g_total += color[1]
+            b_total += color[2]
+        
+        # Average the color components
+        r_avg = r_total // self.samples_per_pixel
+        g_avg = g_total // self.samples_per_pixel
+        b_avg = b_total // self.samples_per_pixel
+        
+        return x, y, (r_avg, g_avg, b_avg)
     
     def draw_scene(self, output_file="raytraced_scene.png"):
         pixels = self.image.load()
@@ -398,16 +429,18 @@ class Renderer:
         self.image.save(output_file)
         print(f"Scene saved as {output_file}")
     
-    def render_preview(self, scale=0.25, max_depth=4, output_file="preview.png"):
+    def render_preview(self, scale=0.25, max_depth=4, output_file="preview.png", samples=2):
         # Save original settings
         orig_width, orig_height = self.width, self.height
         orig_depth = self.max_depth
         orig_image = self.image
+        orig_samples = self.samples_per_pixel
         
         # Apply preview settings
         self.width = max(int(orig_width * scale), 1)
         self.height = max(int(orig_height * scale), 1)
         self.max_depth = max_depth
+        self.samples_per_pixel = samples  # Set the samples for preview
         self.image = Image.new("RGB", (self.width, self.height), (0, 0, 0))
         
         # Update camera aspect ratio if using advanced camera
@@ -415,14 +448,10 @@ class Renderer:
             self.camera.aspect_ratio = self.width / self.height
             self.camera._calculate_basis()
         
-        # Time the rendering
-        print(f"Rendering preview at {self.width}x{self.height} with max_depth={max_depth}...")
-        start_time = time.time()
-        
         # Render the scene
+        print(f"Rendering preview at {self.width}x{self.height} with max_depth={max_depth} and samples={samples}...")
+        start_time = time.time()
         self.draw_scene(output_file)
-        
-        # Calculate and print time taken
         end_time = time.time()
         time_taken = end_time - start_time
         print(f"Preview rendered in {time_taken:.2f} seconds")
@@ -431,6 +460,7 @@ class Renderer:
         self.width, self.height = orig_width, orig_height
         self.max_depth = orig_depth
         self.image = orig_image
+        self.samples_per_pixel = orig_samples
         
         # Update camera aspect ratio if using advanced camera
         if self.use_advanced_camera:
@@ -439,5 +469,7 @@ class Renderer:
         
         return time_taken
 
-    def run(self, output_file="raytraced_scene.png"):
+    def run(self, output_file="raytraced_scene.png", samples_per_pixel=None):
+        if samples_per_pixel is not None:
+            self.samples_per_pixel = samples_per_pixel
         self.draw_scene(output_file)

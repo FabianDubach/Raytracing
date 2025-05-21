@@ -52,7 +52,8 @@ def run_scene(scene_file, width=800, height=600, preview=False, preview_scale=0.
         raster.render_preview(
             scale=preview_scale, 
             max_depth=preview_depth, 
-            output_file=f"{scene_name}_preview.png"
+            output_file=f"{scene_name}_preview.png",
+            samples=samples
         )
     else:
         # Render the full quality scene
@@ -115,6 +116,13 @@ if __name__ == "__main__":
         idx = sys.argv.index('--depth')
         if idx + 1 < len(sys.argv) and sys.argv[idx + 1].isdigit():
             preview_depth = int(sys.argv[idx + 1])
+    
+    if '--samples' in sys.argv:
+        idx = sys.argv.index('--samples')
+        if idx + 1 < len(sys.argv) and sys.argv[idx + 1].isdigit():
+            samples = int(sys.argv[idx + 1])
+    else:
+        samples = 1  # Default to 1 sample per pixel
     
     # Run the scene
     run_scene(scene_file, width, height, preview_mode, preview_scale, preview_depth)

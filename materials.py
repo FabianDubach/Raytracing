@@ -18,7 +18,7 @@ def create_standard_materials():
     metal_black = Material((0, 0, 0), reflectivity=0.3)
     
     # Transparent materials
-    glass = Material((255, 255, 255), reflectivity=0.05, transparency=0.95, refractive_index=1.5)
+    glass = Material((255, 255, 255), reflectivity=0.05, transparency=0.95, refractive_index=1.3)
     water = Material((200, 230, 255), reflectivity=0.1, transparency=0.8, refractive_index=1.33)
     diamond = Material((255, 255, 255), reflectivity=0.2, transparency=0.8, refractive_index=2.42)
     ruby = Material((255, 20, 20), reflectivity=0.1, transparency=0.7, refractive_index=1.77)
