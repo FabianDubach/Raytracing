@@ -130,10 +130,6 @@ python main.py scene_1.py --preview 0.25
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
-
-[Add your license information here]
-
 ## Future Improvements
 
 - Implement more complex materials
