@@ -1,23 +1,22 @@
 # Python Ray Tracing Renderer
 
-## Overview
+## Überblick
 
-This project is a ray tracing rendering engine implemented in Python, capable of creating complex 3D scenes with advanced rendering techniques including reflections, refractions, shadows and 3D text rendering.
+Dieses Projekt ist eine Ray Tracing Rendering-Engine, implementiert in Python. Sie ermöglicht die Erstellung komplexer 3D-Szenen mit fortschrittlichen Rendering-Techniken, einschließlich Reflexionen, Brechungen, Schatten und 3D-Text-Rendering.
 
-## Features
+## Funktionen
 
-- 🌈 Advanced Ray Tracing Rendering
-- 📷 Configurable Camera System
-- 🧊 Procedural 3D Shape Generation
-- 💡 Multiple Light Source Support
-- 📝 3D Text Rendering
-- 🎨 Customizable Materials
-- 🌟 Reflection and Refraction
-- 🕯️ Shadow Casting
+- 🌈 Fortschrittliches Ray Tracing Rendering
+- 📷 Konfigurierbares Kamerasystem
+- 🧊 Prozedurale 3D-Formengenerierung
+- 💡 Unterstützung mehrerer Lichtquellen
+- 📝 3D-Text-Rendering
+- 🎨 Anpassbare Materialien
+- 🌟 Reflexion und Brechung
+- 🕯️ Schattenwurf
 
-## Project Structure
+## Projektstruktur
 
-```mermaid
 %%{init: {'theme': 'neutral', 'themeVariables': {
     'primaryColor': '#E6F3FF',
     'primaryTextColor': '#1A1A2E',
@@ -37,63 +36,62 @@ graph TD
     Camera --> Vector
     MeshBuilder --> Vector
     FontRenderer --> Vector
-```
 
-## Key Components
+## Kernkomponenten
 
-### Core Files
-- `vector.py`: 3D vector operations
-- `ray.py`: Ray casting and intersection logic
-- `camera.py`: Camera positioning and ray generation
-- `renderer.py`: Main ray tracing engine
+### Kerndateien
+- `vector.py`: 3D-Vektoroperationen
+- `ray.py`: Strahlenverfolgung und Schnittlogik
+- `camera.py`: Kamerapositionierung und Strahlengenerierung
+- `renderer.py`: Hauptmotor des Ray Tracings
 
-### Geometry Generation
-- `mesh_builder.py`: Creates 3D shapes (cubes, pyramids, cylinders)
-- `scene_utils.py`: Shape manipulation and rotation utilities
+### Geometrieerzeugung
+- `mesh_builder.py`: Erstellt 3D-Formen (Würfel, Pyramiden, Zylinder)
+- `scene_utils.py`: Formmanipulation und Rotationshilfen
 
-### Scene Management
-- `main.py`: Command-line interface for rendering scenes
-- Scene scripts (`scene_1.py`, `scene_text.py`, etc.): Predefined scene configurations
+### Szenenverwaltung
+- `main.py`: Kommandozeilen-Schnittstelle zum Rendern von Szenen
+- Szenen-Skripte (`scene_1.py`, `scene_text.py`, usw.): Vordefinierte Szenenkonfigurationen
 
-### Advanced Features
-- `font_renderer.py`: Converts text into 3D triangular meshes
-- `lighting.py`: Point and directional light implementations
-- `materials.py`: Predefined material types with optical properties
+### Erweiterte Funktionen
+- `font_renderer.py`: Konvertiert Text in 3D-Dreiecks-Meshes
+- `lighting.py`: Punkt- und Richtungslichtimplementierungen
+- `materials.py`: Vordefinierte Materialtypen mit optischen Eigenschaften
 
-## Rendering Techniques
+## Rendering-Techniken
 
-The renderer supports multiple advanced rendering techniques:
-- Ray-object intersection (spheres, triangles)
-- Reflection and refraction
-- Shadow casting
-- Ambient, diffuse, and specular lighting
-- Perspective camera projection
-- Multi-sample anti-aliasing
+Der Renderer unterstützt mehrere fortschrittliche Rendering-Techniken:
+- Strahl-Objekt-Schnittberechnung (Kugeln, Dreiecke)
+- Reflexion und Brechung
+- Schattenwurf
+- Ambiente, diffuse und spekulative Beleuchtung
+- Perspektivische Kameraprojektion
+- Mehrfach-Sampling-Antialiasing
 
-## Scene Creation Example
+## Beispiel zur Szenenerstellung
 
 ```python
 from vector import Vector
 from materials import create_standard_materials
 
 def setup_scene(raster):
-    # Create materials
+    # Materialien erstellen
     materials = create_standard_materials()
 
-    # Add a reflective sphere
+    # Reflektierende Kugel hinzufügen
     raster.add_sphere(
         center=Vector(0, 0, 50),
         radius=60,
         material=materials['glass']
     )
 
-    # Set up lighting
+    # Beleuchtung einrichten
     raster.add_light(PointLight(
         position=Vector(-300, -300, -200),
         intensity=0.5
     ))
 
-    # Configure camera
+    # Kamera konfigurieren
     raster.set_camera(
         position=Vector(0, 0, -400),
         look_at=Vector(0, 0, 0),
@@ -101,20 +99,20 @@ def setup_scene(raster):
     )
 ```
 
-## Running the Renderer
+## Renderer ausführen
 
 ```bash
-# Basic usage
+# Grundlegende Nutzung
 python main.py scene_1.py
 
-# Render with custom resolution
+# Rendering mit benutzerdefinierter Auflösung
 python main.py scene_1.py 1920 1080
 
-# Generate preview
+# Vorschau generieren
 python main.py scene_1.py --preview 0.25
 ```
 
-## Dependencies
+## Abhängigkeiten
 
 - NumPy
 - Pillow (PIL)
@@ -122,17 +120,17 @@ python main.py scene_1.py --preview 0.25
 
 ## Installation
 
-1. Clone the repository
-2. Install dependencies: `pip install numpy pillow`
-3. Run scenes with `python main.py [scene_file]`
+1. Repository klonen
+2. Abhängigkeiten installieren: `pip install numpy pillow`
+3. Szenen ausführen mit `python main.py [Szenendatei]`
 
-## Contributing
+## Mitwirken
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Beiträge sind willkommen! Bitte zögern Sie nicht, einen Pull Request einzureichen.
 
-## Future Improvements
+## Zukünftige Verbesserungen
 
-- Implement more complex materials
-- Add support for more geometric primitives
-- Optimize rendering performance
-- Implement global illumination techniques
+- Implementierung komplexerer Materialien
+- Unterstützung weiterer geometrischer Primitive
+- Optimierung der Rendering-Leistung
+- Implementierung globaler Beleuchtungstechniken
