@@ -32,7 +32,7 @@ class Vector:
     def normalize(self):
         mag = self.magnitude()
         if mag == 0:
-            return Vector(0, 0, 1)  # Default direction if magnitude is zero
+            return Vector(0, 0, 1)
         return self * (1 / mag)
     
     def __repr__(self):

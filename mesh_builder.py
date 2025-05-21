@@ -3,52 +3,38 @@ from vector import Vector
 from triangle import Triangle
 
 class MeshBuilder:
-
-    """
-    Static utility class for creating geometric shapes composed of triangles.
-    """
     
     @staticmethod
     def create_cube(center, size, color):
-
-        # Calculate the half-size for vertex positions
         half = size / 2
         
-        # Define the 8 vertices of the cube
         v = []
-        v.append(Vector(center.x - half, center.y - half, center.z - half))  # v0: bottom-left-back
-        v.append(Vector(center.x + half, center.y - half, center.z - half))  # v1: bottom-right-back
-        v.append(Vector(center.x + half, center.y + half, center.z - half))  # v2: top-right-back
-        v.append(Vector(center.x - half, center.y + half, center.z - half))  # v3: top-left-back
-        v.append(Vector(center.x - half, center.y - half, center.z + half))  # v4: bottom-left-front
-        v.append(Vector(center.x + half, center.y - half, center.z + half))  # v5: bottom-right-front
-        v.append(Vector(center.x + half, center.y + half, center.z + half))  # v6: top-right-front
-        v.append(Vector(center.x - half, center.y + half, center.z + half))  # v7: top-left-front
+        v.append(Vector(center.x - half, center.y - half, center.z - half))
+        v.append(Vector(center.x + half, center.y - half, center.z - half))
+        v.append(Vector(center.x + half, center.y + half, center.z - half))
+        v.append(Vector(center.x - half, center.y + half, center.z - half))
+        v.append(Vector(center.x - half, center.y - half, center.z + half))
+        v.append(Vector(center.x + half, center.y - half, center.z + half))
+        v.append(Vector(center.x + half, center.y + half, center.z + half))
+        v.append(Vector(center.x - half, center.y + half, center.z + half))
         
-        # Create triangles for each face - ensure counter-clockwise winding when viewed from outside
         triangles = []
         
-        # Front face (counter-clockwise when looking at front)
         triangles.append(Triangle(v[4], v[5], v[6], color))
         triangles.append(Triangle(v[4], v[6], v[7], color))
         
-        # Back face (counter-clockwise when looking at back)
         triangles.append(Triangle(v[1], v[0], v[3], color))
         triangles.append(Triangle(v[1], v[3], v[2], color))
         
-        # Left face (counter-clockwise when looking from left)
         triangles.append(Triangle(v[0], v[4], v[7], color))
         triangles.append(Triangle(v[0], v[7], v[3], color))
         
-        # Right face (counter-clockwise when looking from right)
         triangles.append(Triangle(v[5], v[1], v[2], color))
         triangles.append(Triangle(v[5], v[2], v[6], color))
         
-        # Top face (counter-clockwise when looking from top)
         triangles.append(Triangle(v[7], v[6], v[2], color))
         triangles.append(Triangle(v[7], v[2], v[3], color))
         
-        # Bottom face (counter-clockwise when looking from bottom)
         triangles.append(Triangle(v[0], v[1], v[5], color))
         triangles.append(Triangle(v[0], v[5], v[4], color))
         
@@ -56,30 +42,25 @@ class MeshBuilder:
     
     @staticmethod
     def create_pyramid(center, base_size, height, color):
-
-        # Define the vertices
         half = base_size / 2
         base_y = center.y
-        apex = Vector(center.x, center.y - height, center.z)  # Apex is BELOW the base for correct orientation
+        apex = Vector(center.x, center.y - height, center.z)
         
-        # Base vertices (counter-clockwise from bottom left when looking from below)
         base_verts = []
-        base_verts.append(Vector(center.x - half, base_y, center.z - half))  # v0: bottom-left
-        base_verts.append(Vector(center.x + half, base_y, center.z - half))  # v1: bottom-right
-        base_verts.append(Vector(center.x + half, base_y, center.z + half))  # v2: top-right
-        base_verts.append(Vector(center.x - half, base_y, center.z + half))  # v3: top-left
+        base_verts.append(Vector(center.x - half, base_y, center.z - half))
+        base_verts.append(Vector(center.x + half, base_y, center.z - half))
+        base_verts.append(Vector(center.x + half, base_y, center.z + half))
+        base_verts.append(Vector(center.x - half, base_y, center.z + half))
 
         triangles = []
         
-        # Base (2 triangles) - counter-clockwise when viewed from below
         triangles.append(Triangle(base_verts[0], base_verts[2], base_verts[1], color))
         triangles.append(Triangle(base_verts[0], base_verts[3], base_verts[2], color))
         
-        # 4 triangular faces - counter-clockwise when viewed from outside
-        triangles.append(Triangle(base_verts[0], base_verts[1], apex, color))  # Front face
-        triangles.append(Triangle(base_verts[1], base_verts[2], apex, color))  # Right face
-        triangles.append(Triangle(base_verts[2], base_verts[3], apex, color))  # Back face
-        triangles.append(Triangle(base_verts[3], base_verts[0], apex, color))  # Left face
+        triangles.append(Triangle(base_verts[0], base_verts[1], apex, color))
+        triangles.append(Triangle(base_verts[1], base_verts[2], apex, color))
+        triangles.append(Triangle(base_verts[2], base_verts[3], apex, color))
+        triangles.append(Triangle(base_verts[3], base_verts[0], apex, color))
         
         return triangles
     
@@ -88,14 +69,12 @@ class MeshBuilder:
         
         triangles = []
         
-        # Create vertices for top and bottom circles
         top_center = Vector(center.x, center.y - height/2, center.z)
         bottom_center = Vector(center.x, center.y + height/2, center.z)
         
         top_verts = []
         bottom_verts = []
         
-        # Create the vertices around the perimeter of the cylinder
         for i in range(segments):
             angle = 2 * math.pi * i / segments
             x = center.x + radius * math.cos(angle)
@@ -104,24 +83,19 @@ class MeshBuilder:
             top_verts.append(Vector(x, top_center.y, z))
             bottom_verts.append(Vector(x, bottom_center.y, z))
         
-        # Create triangles for the top face (fan) - counter-clockwise
         for i in range(segments):
             next_i = (i + 1) % segments
             triangles.append(Triangle(top_verts[i], top_verts[next_i], top_center, color))
         
-        # Create triangles for the bottom face (fan) - counter-clockwise when viewed from below
         for i in range(segments):
             next_i = (i + 1) % segments
             triangles.append(Triangle(bottom_verts[next_i], bottom_verts[i], bottom_center, color))
         
-        # Create triangles for the sides (quads split into 2 triangles)
         for i in range(segments):
             next_i = (i + 1) % segments
             
-            # First triangle of the quad - counter-clockwise when viewed from outside
             triangles.append(Triangle(bottom_verts[i], bottom_verts[next_i], top_verts[i], color))
             
-            # Second triangle of the quad - counter-clockwise when viewed from outside
             triangles.append(Triangle(bottom_verts[next_i], top_verts[next_i], top_verts[i], color))
         
         return triangles
