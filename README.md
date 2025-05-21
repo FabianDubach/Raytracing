@@ -17,46 +17,32 @@ Dieses Projekt ist eine Ray Tracing Rendering-Engine, implementiert in Python. S
 
 ## Projektstruktur
 
-%%{init: {'theme': 'neutral', 'themeVariables': {
-    'primaryColor': '#E6F3FF',
-    'primaryTextColor': '#1A1A2E',
-    'primaryBorderColor': '#4D5566',
-    'lineColor': '#667085'
-}}}%%
-graph TD
-    Scene -->|Configure| Renderer
-    Renderer -->|Cast Rays| Ray
-    Renderer -->|Generate Rays| Camera
-    Renderer -->|Apply Lighting| Lighting
-    Renderer -->|Use Materials| Materials
-    Renderer -->|Create Shapes| MeshBuilder
-    Renderer -->|Render Text| FontRenderer
-
-    Ray --> Vector
-    Camera --> Vector
-    MeshBuilder --> Vector
-    FontRenderer --> Vector
-
-## Kernkomponenten
-
 ### Kerndateien
-- `vector.py`: 3D-Vektoroperationen
-- `ray.py`: Strahlenverfolgung und Schnittlogik
+- `renderer.py`: Hauptmotor des Ray Tracings - das Herzstück des gesamten Projekts
+- `ray.py`: Strahlenverfolgung und Schnittlogik - fundamentale Rendering-Mechanik
+- `vector.py`: 3D-Vektoroperationen - mathematische Grundlage aller Berechnungen
 - `camera.py`: Kamerapositionierung und Strahlengenerierung
-- `renderer.py`: Hauptmotor des Ray Tracings
 
-### Geometrieerzeugung
-- `mesh_builder.py`: Erstellt 3D-Formen (Würfel, Pyramiden, Zylinder)
+### Geometrie und Objekte
+- `mesh_builder.py`: Erstellt 3D-Formen wie Würfel, Pyramiden und Zylinder
+- `triangle.py`: Dreiecks-Geometrie und Strahlenschnitt
+- `sphere.py`: Kugel-Geometrie und Strahlenschnitt
 - `scene_utils.py`: Formmanipulation und Rotationshilfen
 
-### Szenenverwaltung
-- `main.py`: Kommandozeilen-Schnittstelle zum Rendern von Szenen
-- Szenen-Skripte (`scene_1.py`, `scene_text.py`, usw.): Vordefinierte Szenenkonfigurationen
-
-### Erweiterte Funktionen
-- `font_renderer.py`: Konvertiert Text in 3D-Dreiecks-Meshes
-- `lighting.py`: Punkt- und Richtungslichtimplementierungen
+### Materialien und Beleuchtung
 - `materials.py`: Vordefinierte Materialtypen mit optischen Eigenschaften
+- `lighting.py`: Punkt- und Richtungslichtimplementierungen
+
+### Erweiterte Rendering-Funktionen
+- `font_renderer.py`: Konvertiert Text in 3D-Dreiecks-Meshes
+- `scene_final.py`: Komplexe Beispielszene mit fortgeschrittenen Techniken
+- `scene_text.py`: Demonstration von 3D-Text-Rendering
+
+### Ausführung und Management
+- `main.py`: Kommandozeilen-Schnittstelle zum Rendern von Szenen
+- `scene_1.py`: Beispielszene mit grundlegenden Rendering-Techniken
+- `test_scene.py`: Testszene für Grundfunktionen
+
 
 ## Rendering-Techniken
 
