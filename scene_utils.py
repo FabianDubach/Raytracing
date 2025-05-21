@@ -3,60 +3,6 @@ from vector import Vector
 from ray import EnhancedTriangle, Material
 from mesh_builder import MeshBuilder
 
-def create_truncated_icosahedron(center, radius, color):
-    phi = (1 + math.sqrt(5)) / 2
-    
-    vertices = []
-    
-    vertices.append(Vector(0, phi, 1))
-    vertices.append(Vector(0, phi, -1))
-    vertices.append(Vector(0, -phi, 1))
-    vertices.append(Vector(0, -phi, -1))
-    
-    vertices.append(Vector(1, 0, phi))
-    vertices.append(Vector(-1, 0, phi))
-    vertices.append(Vector(1, 0, -phi))
-    vertices.append(Vector(-1, 0, -phi))
-    
-    vertices.append(Vector(phi, 1, 0))
-    vertices.append(Vector(phi, -1, 0))
-    vertices.append(Vector(-phi, 1, 0))
-    vertices.append(Vector(-phi, -1, 0))
-
-    scaled_vertices = []
-
-    for v in vertices:
-        magnitude = math.sqrt(v.x**2 + v.y**2 + v.z**2)
-        scaled_v = Vector(
-            (v.x / magnitude) * radius + center.x,
-            (v.y / magnitude) * radius + center.y,
-            (v.z / magnitude) * radius + center.z
-        )
-        scaled_vertices.append(scaled_v)
-    
-    faces = [
-        [0, 4, 5], [0, 5, 10], [0, 10, 1], [0, 1, 8], [0, 8, 4],
-        [4, 8, 9], [5, 4, 2], [10, 5, 11], [1, 10, 7], [8, 1, 6],
-        [3, 6, 7], [3, 7, 11], [3, 11, 2], [3, 2, 9], [3, 9, 6],
-        [9, 2, 4], [2, 11, 5], [11, 7, 10], [7, 6, 1], [6, 9, 8]
-    ]
-    
-    triangles = []
-    for face in faces:
-        v0 = scaled_vertices[face[0]]
-        v1 = scaled_vertices[face[1]]
-        v2 = scaled_vertices[face[2]]
-        
-        face_color = color
-        if (face[0] + face[1] + face[2]) % 2 == 0:
-            dark_color = (max(0, color[0] - 120), max(0, color[1] - 120), max(0, color[2] - 120))
-            face_color = dark_color
-        
-        material = Material(face_color)
-        triangles.append(EnhancedTriangle(v0, v1, v2, material))
-    
-    return triangles
-
 def rotate_vertex(vertex, origin, rotation_degrees):
     angle_x = math.radians(rotation_degrees[0])
     angle_y = math.radians(rotation_degrees[1])
