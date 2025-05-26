@@ -9,9 +9,9 @@ Dieses Projekt ist eine Ray Tracing Rendering-Engine, implementiert in Python. S
 - 🌈 Fortschrittliches Ray Tracing Rendering
 - 📷 Konfigurierbares Kamerasystem
 - 🧊 Prozedurale 3D-Formengenerierung
-- 💡 Unterstützung mehrerer Lichtquellen
 - 📝 3D-Text-Rendering
 - 🎨 Anpassbare Materialien
+- 💡 Unterstützung mehrerer Lichtquellen
 - 🌟 Reflexion und Brechung
 - 🕯️ Schattenwurf
 
@@ -28,20 +28,18 @@ Dieses Projekt ist eine Ray Tracing Rendering-Engine, implementiert in Python. S
 - `triangle.py`: Dreiecks-Geometrie und Strahlenschnitt
 - `sphere.py`: Kugel-Geometrie und Strahlenschnitt
 - `scene_utils.py`: Formmanipulation und Rotationshilfen
+- `font_renderer.py`: Konvertiert Text in 3D-Dreiecks-Meshes
 
 ### Materialien und Beleuchtung
 - `materials.py`: Vordefinierte Materialtypen mit optischen Eigenschaften
 - `lighting.py`: Punkt- und Richtungslichtimplementierungen
 
 ### Erweiterte Rendering-Funktionen
-- `font_renderer.py`: Konvertiert Text in 3D-Dreiecks-Meshes
 - `scene_final.py`: Komplexe Beispielszene mit fortgeschrittenen Techniken
 - `scene_text.py`: Demonstration von 3D-Text-Rendering
 
 ### Ausführung und Management
 - `main.py`: Kommandozeilen-Schnittstelle zum Rendern von Szenen
-- `scene_1.py`: Beispielszene mit grundlegenden Rendering-Techniken
-- `test_scene.py`: Testszene für Grundfunktionen
 
 
 ## Rendering-Techniken
